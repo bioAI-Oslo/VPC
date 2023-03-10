@@ -1,0 +1,2 @@
+# VPC
+Variational Place Cells
