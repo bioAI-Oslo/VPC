@@ -1,0 +1,64 @@
+font.family        : serif
+font.serif         : Computer Modern Roman, Times, Palatino, New Century Schoolbook, Bookman
+font.size : 10
+text.usetex: True
+
+# Adapted from https://gist.github.com/huyng/816622
+#axes.facecolor     : eeeeee   # axes background color
+#axes.edgecolor      : bcbcbc   # axes edge color
+#axes.linewidth      : 1        # edge linewidth
+axes.titlesize      : 9  # fontsize of the axes title
+axes.labelsize      : 9    # fontsize of the x any y labels
+axes.titlepad:      1.0     # pad between axes and title in points
+axes.labelpad:      1.0     # pad between axes and title in points
+
+#axes.labelcolor     : 555555
+axes.axisbelow      : True     # whether axis gridlines and ticks are below
+                               # the axes elements (lines, text, etc)
+axes.spines.top:    False
+axes.spines.right:  False
+
+# colorblind color scheme!
+axes.prop_cycle: cycler("color", ["348ABD", "7A68A6", "A60628", "467821", "CF4457", "188487", "E24A33"])
+                      # E24A33 : orange
+                      # 7A68A6 : purple
+                      # 348ABD : blue
+                      # 188487 : turquoise
+                      # A60628 : red
+                      # CF4457 : pink
+                      # 467821 : green
+
+figure.dpi:         100       # figure dots per inch
+
+lines.linewidth : 0.8
+lines.markersize : 1
+
+image.cmap : Blues
+image.interpolation: None
+legend.frameon : False
+figure.figsize:     1, 1 # figure size in inches
+
+#figure.autolayout: False  # When True, automatically adjust subplot
+                           # parameters to make the plot fit the figure
+                           # using `tight_layout`
+#figure.constrained_layout.use: False  # When True, automatically make plot
+                                       # elements fit on the figure. (Not
+                                       # compatible with `autolayout`, above).
+
+
+savefig.format: svg          # {png, ps, pdf, svg}
+savefig.bbox: tight    # {tight, standard}
+                                # 'tight' is incompatible with pipe-based animation
+                                # backends (e.g. 'ffmpeg') but will work with those
+                                # based on temporary files (e.g. 'ffmpeg_file')
+savefig.pad_inches:   0.0     # Padding to be used when bbox is set to 'tight'
+savefig.transparent: True
+savefig.dpi:  figure
+
+ytick.major.pad:    1     # distance to major tick label in points
+ytick.minor.pad:    1     # distance to the minor tick label in points
+ytick.labelsize:    small  # font size of the tick labels
+
+xtick.major.pad:    1     # distance to major tick label in points
+xtick.minor.pad:    1     # distance to the minor tick label in points
+xtick.labelsize:    small  # font size of the tick labels

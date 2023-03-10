@@ -99,8 +99,8 @@ class VPC_RNN(torch.nn.Module):
             val_loss = self.loss_fn(yhat, y)# + weight_reg + activity_reg
         return val_loss, yhat, g
 
-class VPC_FC(VPC_RNN):
-    """ Fully connected deep network for the variational position reconstruction task
+class VPC_FF(VPC_RNN):
+    """ Feed Forward deep network for the variational position reconstruction task
     """
     def __init__(self, params, device = None, **kwargs):
         """
