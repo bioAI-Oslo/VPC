@@ -20,10 +20,10 @@ def load_parameters(path):
         params = json.load(f)
     return params
 
-def load_model(path, device = "cpu"):
+def load_model(path, device = "cpu", model_type = "rnn"):
     # load a model to cpu for detaching + numpy
     params = load_parameters(path)
-    model = torch.load(path + "/trained_model", map_location = torch.device(device))
+    model = torch.load(path + f"/trained_{model_type}_model", map_location = torch.device(device))
     model.device = device
     return model, params
 

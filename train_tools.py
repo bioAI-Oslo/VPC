@@ -36,12 +36,10 @@ def get_datasets(loc, context, trajectories, batch_size, device = "cpu"):
     if trajectories:
         x_train = train_data["v"]
         x_val = val_data["v"]
-        train_data["r"] = train_data["r"][:,1:]
-        val_data["r"] = val_data["r"][:,1:]
     else:
         x_train = train_data["r"]
         x_val = val_data["r"]
-
+        
     y_train = train_data["r"]
     y_val = val_data["r"]
 
@@ -81,7 +79,7 @@ class Logger(object):
                 self.metrics[name] = np.array([]) # add new metric entry if name not found
             self.metrics[name] = np.append(self.metrics[name], new_metrics[key]) # otherwise append to metrics
 
-    def save_metrics(self):
+    def save_metrics(self, name):
         """Unpack and save all metrics
         """
-        np.savez(f"{self.dir}/metrics.npz", **self.metrics)
+        np.savez(f"{self.dir}/{name}_metrics.npz", **self.metrics)
