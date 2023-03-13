@@ -20,10 +20,9 @@ class Parameters:
             self.params["lr"] = 1e-4  # learning rate
             self.params["al1"] = 10.0  # l1 activity regularization
             self.params["l2"] = 0  # l2 weight regularization
-            self.params["basis_vectors"] = 500  # number of basis vectors used for initialization
             self.params["nodes"] = 500  # number of recurrent nodes
             self.params["outputs"] = 100  # number of output nodes
-            self.params["reset_interval"] = 1  # > 1 is stateful
+            self.params["reset_interval"] = 10  # > 1 is stateful
             self.params["context"] = True  # whether to give model context signal
         else:
             # load experimental parameters from file
