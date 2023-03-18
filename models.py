@@ -50,7 +50,6 @@ class VPC_RNN(torch.nn.Module):
 
     def decode_phases(self, p, r):
         pt = p/(torch.sum(p, dim = -2, keepdim = True) + self.eps)
-        # (bs, ts, 1, 2) * (bs, ts, N, 1)
         mu = torch.sum(r[...,None, :]*pt[...,None], dim = 1) 
         return mu 
 
@@ -67,7 +66,7 @@ class VPC_RNN(torch.nn.Module):
         if g_prev is None:
             initial_state = self.reset_state((v.shape[0], self.params["nodes"]))
         else:
-            initial_state = g_prev.detach().clone().to(self.device) # persistent RNN state
+            initial_state = g_prev
         g, _ = self.g(v, initial_state[None])
         p = self.activation(self.p(g)) 
         
@@ -93,7 +92,7 @@ class VPC_RNN(torch.nn.Module):
             yhat, g, p, mu = self(x, g_prev)
             weight_reg = self.weight_reg(self.params["l2"])
             activity_reg = l1_reg(self.params["al1"], g)
-            val_loss = self.loss_fn(yhat, y)# + weight_reg + activity_reg
+            val_loss = self.loss_fn(yhat, y) + weight_reg + activity_reg
         return val_loss, yhat, g
     
     def inference(self, dataset):
