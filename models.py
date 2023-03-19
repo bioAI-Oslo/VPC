@@ -152,11 +152,11 @@ class VPC_FF(VPC_RNN):
         n_in = int(2 + params["context"] * 6) # 6 possible contexts, 2 velocities
 
         self.g = torch.nn.Sequential(
-            torch.nn.Linear(n_in, 512, bias = False),
+            torch.nn.Linear(n_in, 64, bias = False),
             torch.nn.ReLU(),
-            torch.nn.Linear(512, 512, bias = False),
+            torch.nn.Linear(64, 128, bias = False),
             torch.nn.ReLU(),
-            torch.nn.Linear(512, params["nodes"], bias = False),
+            torch.nn.Linear(128, params["nodes"], bias = False),
             torch.nn.ReLU())
         
         self.p = torch.nn.Linear(params["nodes"], params["outputs"], bias = False)
