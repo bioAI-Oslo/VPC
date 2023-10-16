@@ -44,7 +44,6 @@ class Environments:
 
 if __name__ == "__main__":
     
-    """
     import matplotlib.pyplot as plt
 
     environment = Environments()
@@ -77,4 +76,4 @@ if __name__ == "__main__":
             plt.plot(wall[:, 0], wall[:, 1])
     plt.axis("square")
     plt.show()
-    """
+    

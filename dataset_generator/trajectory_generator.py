@@ -2,16 +2,10 @@ import numpy as np
 from scipy import stats
 
 import dataset_tools
-import environments
 
 class DataGenerator:
     def __init__(self) -> None:
-        """Set dataset parameters and setup environments
-        Attributes:
-        rat: Rat class, used to create smooth steps and border 
-            responses.
-        environment: Class containing walls, defines geometries 
-            and context.
+        """ Class for generating trajectories
         """
         self._kappa_hd = 4  # sharpness of hd sampling
         self._std_s = 0.5  # width of speed sampling pdf

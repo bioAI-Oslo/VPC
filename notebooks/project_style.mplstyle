@@ -28,7 +28,7 @@ axes.prop_cycle: cycler("color", ["348ABD", "7A68A6", "A60628", "467821", "CF445
                       # CF4457 : pink
                       # 467821 : green
 
-figure.dpi:         100       # figure dots per inch
+figure.dpi:         300       # figure dots per inch
 
 lines.linewidth : 0.8
 lines.markersize : 1
@@ -36,12 +36,12 @@ lines.markersize : 1
 image.cmap : Blues
 image.interpolation: None
 legend.frameon : False
-figure.figsize:     1, 1 # figure size in inches
+figure.figsize:     1.5, 1.5 # figure size in inches
 
 #figure.autolayout: False  # When True, automatically adjust subplot
                            # parameters to make the plot fit the figure
                            # using `tight_layout`
-#figure.constrained_layout.use: False  # When True, automatically make plot
+figure.constrained_layout.use: False  # When True, automatically make plot
                                        # elements fit on the figure. (Not
                                        # compatible with `autolayout`, above).
 

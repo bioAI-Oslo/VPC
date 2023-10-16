@@ -23,7 +23,7 @@ class VPC_RNN(torch.nn.Module):
             self.device = device
 
         n_in = int(2 + params["context"] * 6) # 6 possible contexts, 2 velocities
-                
+
         # initialize layers
         self.g = torch.nn.RNN(
             input_size = n_in,
@@ -34,7 +34,7 @@ class VPC_RNN(torch.nn.Module):
         torch.nn.init.eye_(self.g.weight_hh_l0) # identity initialization
         
         self.p = torch.nn.Linear(params["nodes"], params["outputs"], bias=False, device = self.device)
-        self.eps = 1e-16 # small epsilon for center of mass estimate
+        self.eps = torch.tensor(1e-14) # small epsilon for center of mass estimate
 
         self.activation = torch.nn.ReLU()
         self.loss_fn = torch.nn.MSELoss() 
@@ -49,12 +49,12 @@ class VPC_RNN(torch.nn.Module):
         return torch.zeros(shape, device = self.device)
 
     def decode_phases(self, p, r):
-        pt = p/(torch.sum(p, dim = -2, keepdim = True) + self.eps)
-        mu = torch.sum(r[...,None, :]*pt[...,None], dim = 1) 
+        pt = p/torch.maximum(self.eps, torch.sum(p, dim = -2, keepdim = True))
+        mu = torch.sum(r[...,None, :]*pt[...,None], dim = 1)
         return mu 
 
     def decode_position(self, p, mu):
-        po = p/(torch.sum(p, dim = -1, keepdim = True) + self.eps)
+        po = p/(torch.maximum(self.eps, torch.sum(p, dim = -1, keepdim = True)))
         rhat = torch.sum(mu[:,None]*po[...,None], dim = -2)
         return rhat 
 
@@ -67,6 +67,7 @@ class VPC_RNN(torch.nn.Module):
             initial_state = self.reset_state((v.shape[0], self.params["nodes"]))
         else:
             initial_state = g_prev
+            
         g, _ = self.g(v, initial_state[None])
         p = self.activation(self.p(g)) 
         

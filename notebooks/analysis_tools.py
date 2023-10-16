@@ -66,7 +66,7 @@ def plot_sequence(ratemaps, titles = None, show_units = 5, pane_size = 1):
     
     return fig, axs
 
-def plot_ensemble(ratemaps, n = 3, cmap = "jet"):
+def plot_ensemble(ratemaps, n = 3, cmap = "jet", pane_size = 1):
     """ Plot board of unit activities in a single environment
 
     Args:
@@ -80,7 +80,7 @@ def plot_ensemble(ratemaps, n = 3, cmap = "jet"):
         _type_: _description_
     """
 
-    figsize = 3*np.array([n,n])
+    figsize = pane_size*np.array([n,n])
     fig, ax = plt.subplots(n, n, figsize = figsize)
     
     for i in range(n**2):
