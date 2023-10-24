@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from train_tools import l1_reg, l2_reg
+from train_tools import l1_reg
 
 class VPC_RNN(torch.nn.Module):
     """ RNN model for the variational position reconstruction task
@@ -42,9 +42,6 @@ class VPC_RNN(torch.nn.Module):
         self.to(device) 
         self.optimizer = torch.optim.Adam(self.parameters(), lr=params["lr"])
    
-    def weight_reg(self, l2):
-        return l2_reg(l2, self.g.weight_hh_l0)
-
     def reset_state(self, shape):
         return torch.zeros(shape, device = self.device)
 
@@ -78,9 +75,8 @@ class VPC_RNN(torch.nn.Module):
     def train_step(self, x, y, g_prev = None):
         self.optimizer.zero_grad(set_to_none=True)        
         yhat, g, p, mu = self(x, g_prev)
-        weight_reg = self.weight_reg(self.params["l2"])
         activity_reg = l1_reg(self.params["al1"], g)
-        loss = self.loss_fn(yhat, y) + weight_reg + activity_reg
+        loss = self.loss_fn(yhat, y)  + activity_reg
         
         # parameter update
         loss.backward()
@@ -91,9 +87,8 @@ class VPC_RNN(torch.nn.Module):
         # val step and train step are equal, except for gradient
         with torch.no_grad():
             yhat, g, p, mu = self(x, g_prev)
-            weight_reg = self.weight_reg(self.params["l2"])
             activity_reg = l1_reg(self.params["al1"], g)
-            val_loss = self.loss_fn(yhat, y) + weight_reg + activity_reg
+            val_loss = self.loss_fn(yhat, y)  + activity_reg
         return val_loss, yhat, g
     
     def inference(self, dataset):
@@ -163,11 +158,18 @@ class VPC_FF(VPC_RNN):
         self.p = torch.nn.Linear(params["nodes"], params["outputs"], bias = False)
         self.to(self.device) 
         self.optimizer = torch.optim.Adam(self.parameters(), lr=params["lr"])
-    
-    def weight_reg(self, l2):
-        return l2_reg(l2, self.g[-2].weight[-1])
-        
+
     def forward(self, inputs, g_prev = None):
+        """
+        Forward pass of the model.
+
+        Parameters:
+            inputs (list): List of input tensors.
+            g_prev (Tensor, optional): Previous hidden state tensor. Not used for FF network
+
+        Returns:
+            Tuple: A tuple containing the predicted output tensor (yhat), the current hidden state (g), the activation (p), and the decoded center (mu).
+        """
         rc = inputs[0]
         r = inputs[1]
         g = self.g(rc)

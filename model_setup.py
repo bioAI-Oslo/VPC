@@ -19,7 +19,6 @@ class Parameters:
             self.params["batch_size"] = 64
             self.params["lr"] = 1e-4  # learning rate
             self.params["al1"] = 10.0  # l1 activity regularization
-            self.params["l2"] = 0  # l2 weight regularization
             self.params["nodes"] = 500  # number of recurrent nodes
             self.params["outputs"] = 100  # number of output nodes
             self.params["reset_interval"] = 10  # > 1 is stateful

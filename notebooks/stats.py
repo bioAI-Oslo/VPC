@@ -5,18 +5,16 @@ import scipy.stats
 from astropy.convolution import Gaussian2DKernel
 from astropy.convolution import convolve
 
-def population_vector_ratemaps(s, r, bins, smooth = False):
-    """Compute population vector of ratemaps
+def ratemaps(s, r, bins, smooth = False):
+    """ Vector of ratemaps
 
     Args:
         s (np.array): signal to be binned. Of shape (N, T, Nc)
         r (np.array): coordinates corresponding to signal values. Of shape (N, T, 2)
             N is the number of samples, Nc the number of units in the population.
         bins: Bins used for ratemap construction. See binned_statistic_2d docs.
-            typically tuple of ints (binx, biny), or vectors of length binx, biny. 
         smooth (bool, optional): Whether to smooth ratemaps using a Gaussian kernel with NaN interpolation. 
             Defaults to False.
-
     Returns:
         np.array: Population vector of ratemaps, of shape (Nc, binx, biny)
     """
@@ -32,24 +30,6 @@ def population_vector_ratemaps(s, r, bins, smooth = False):
             stack = convolve(stack, kernel[None])
         ratemaps.append(stack)
     return np.array(ratemaps)
-
-def correlate_population_vectors_binwise(stack1, stack2):
-    """Correlate two stacks of ratemaps binwise
-
-    Args:
-        stack1 (np.ndarray): array of ratemaps, of shape (N, binx, biny)
-        stack2 (np.ndarray): array of ratemaps, also of shape (N, binx, biny)
-
-    Returns:
-        np.ndarray: correlations. Of shape (binx, biny)
-    """
-    correlations = np.zeros((stack1.shape[1], stack1.shape[2]))
-    # compute correlations for each bin
-    for i in range(stack1.shape[1]):
-        for j in range(stack1.shape[2]):
-            # corrcoeff is symmetric
-            correlations[i,j] = np.corrcoef(stack1[:,i,j], stack2[:,i,j])[0,1]
-    return correlations
 
 def correlate_population_vectors_unitwise(stack1, stack2):
     """Correlate two stacks of ratemaps unitwise
@@ -82,7 +62,7 @@ def spatial_information(s, r, bins):
     x = r[:,0]
     y = r[:,1]
     mean_bin_rate, _,_,_ = scipy.stats.binned_statistic_2d(x, y, s.T, bins = bins, statistic = "mean")
-    mean_rate = np.mean(s, axis = 0)
+    mean_rate = np.nanmean(s, axis = 0)
 
     # and number of visits to a bin
     counts, _,_,_= scipy.stats.binned_statistic_2d(x, y, s.T, bins = bins, statistic = "count")

@@ -130,5 +130,5 @@ dmypy.json
 
 
 datasets/
-
+notebooks/figures/
 .DS_Store

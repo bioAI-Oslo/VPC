@@ -33,7 +33,7 @@ figure.dpi:         300       # figure dots per inch
 lines.linewidth : 0.8
 lines.markersize : 1
 
-image.cmap : Blues
+image.cmap : viridis
 image.interpolation: None
 legend.frameon : False
 figure.figsize:     1.5, 1.5 # figure size in inches

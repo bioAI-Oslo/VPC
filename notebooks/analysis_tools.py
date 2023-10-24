@@ -15,6 +15,7 @@ import environments
 
 
 def load_parameters(path):
+    # load parameters of model
     spec_file = f"{path}/model_parameters.json"
     with open(spec_file, "r") as f:
         params = json.load(f)
@@ -27,34 +28,44 @@ def load_model(path, device = "cpu", model_type = "rnn"):
     model.device = device
     return model, params
 
-def plot_sequence(ratemaps, titles = None, show_units = 5, pane_size = 1):
-    """Plot sequence experiment.
-
-    Args:
-        u (_type_): _description_
-        r (_type_): _description_
-        bins (_type_): _description_
-        titles (_type_, optional): _description_. Defaults to None.
-
+def plot_sequence(ratemaps, titles = None, show_units = 5, pane_size = 1, cmap = None, normalize = False):
+    """
+    Plot sequence ratemaps.
+    
+    Parameters:
+        ratemaps (ndarray): An array of shape (num_envs, num_units, height, width) containing the ratemaps for each environment and unit.
+        titles (list, optional): A list of titles for each row of ratemaps. Defaults to None.
+        show_units (int, optional): The number of units to show. Defaults to 5.
+        pane_size (float, optional): The size of each pane in the plot. Defaults to 1.
+        cmap (str, optional): The colormap to use for the plot. Defaults to None.
+        normalize (bool, optional): Whether to normalize the ratemaps. Defaults to False.
+    
     Returns:
-        _type_: _description_
+        fig (Figure): The generated matplotlib Figure object.
+        axs (ndarray): An array of Axes objects representing the subplots in the plot.
     """
     
     if titles is None:
         titlepad = 0
     else:
         titlepad = 1
+
     figsize = [pane_size*(len(ratemaps)+titlepad), pane_size*show_units]
     
     fig, axs = plt.subplots(show_units, len(ratemaps) + titlepad, figsize = figsize, squeeze = False)
 
-    vmax = np.nanmax(ratemaps, axis = (0, -2, -1))
+    max_vals = np.nanmax(ratemaps, axis = (-2, -1))
     
     for i in range(len(ratemaps)):
         # i is column (environment) index!
         for j in range(show_units):
             # j is row (unit) index!
-            axs[j,i].imshow(ratemaps[i,j].T, cmap = "jet", origin = "lower", vmin = 0)#, vmax = vmax[j])
+            if normalize:
+                vmax = np.amax(max_vals[:,j])
+            else:
+                vmax = np.amax(max_vals[i,j])
+
+            axs[j,i].imshow(ratemaps[i,j].T, cmap = cmap, origin = "lower", vmin = 0, vmax = vmax)
             axs[j,i].axis("off")
     
     if titles is not None:
@@ -66,18 +77,18 @@ def plot_sequence(ratemaps, titles = None, show_units = 5, pane_size = 1):
     
     return fig, axs
 
-def plot_ensemble(ratemaps, n = 3, cmap = "jet", pane_size = 1):
-    """ Plot board of unit activities in a single environment
+def plot_ensemble(ratemaps, n = 3, cmap = None, pane_size = 1):
+    """
+    Plots a grid of ensemble ratemaps.
 
     Args:
-        u (_type_): _description_
-        r (_type_): _description_
-        bins (_type_): _description_
-        n (int, optional): _description_. Defaults to 3.
-        cmap (str, optional): _description_. Defaults to "jet".
+        ratemaps (list): A list of ratemaps to be plotted.
+        n (int, optional): The number of rows and columns in the grid. Defaults to 3.
+        cmap (str, optional): The colormap to be used for plotting. Defaults to None.
+        pane_size (float, optional): The size of each pane in the grid. Defaults to 1.
 
     Returns:
-        _type_: _description_
+        fig, ax: The matplotlib figure and axis objects.
     """
 
     figsize = pane_size*np.array([n,n])
@@ -91,13 +102,7 @@ def plot_ensemble(ratemaps, n = 3, cmap = "jet", pane_size = 1):
     return fig, ax
 
 def spatial_information_selection(p, r, bins, threshold = 0.025):
-    """_summary_
-    Args:
-        p (_type_): _description_
-        r (_type_): _description_
-        bins (_type_): _description_
-        threshold (float, optional): _description_. Defaults to 0.025.
-    """
+
     info = np.zeros((len(p), p.shape[-1]))
 
     # compute spatial information
@@ -118,7 +123,55 @@ def spatial_information_selection(p, r, bins, threshold = 0.025):
     mask = np.prod(above_cutoff, axis = 0).astype("bool")
     return mask, info
 
+def top_k_sum(x, ax = 0, k = 10):
+    """
+    find indices of units with top k sum over axis a
+
+    Parameters:
+        x (np.ndarray): The input array.
+        ax (int, optional): The axis along which the sum is calculated. Default is 0.
+        k (int, optional): The number of top sums to return. Default is 10.
+
+    Returns:
+        np.ndarray: An array of the top k sums in descending order.
+    """
+    y = np.sum(x, axis = ax)
+    return y.argsort()[-k:][::-1]
+
+def top_k_max(x, ax = 0, k = 10):
+    """
+    find indices of units with top k max over axis a
+
+    Parameters:
+        x (np.ndarray): The input array.
+        ax (int, optional): The axis along which the sum is calculated. Default is 0.
+        k (int, optional): The number of top sums to return. Default is 10.
+
+    Returns:
+        np.ndarray: An array of the top k sums in descending order.
+    """
+    y = np.amax(x, axis = ax)
+    return y.argsort()[-k:][::-1]
+
+
 def test_dataset(sequence, timesteps, context = False, env = None, device = "cpu", trajectories = True):
+    """
+    Create a test dataset for a given sequence.
+
+    Parameters:
+    - sequence: The sequence of names used to generate the dataset. (type: list[str])
+    - timesteps: The number of timesteps in each trajectory. (type: int)
+    - context: Whether to include context signals in the input. (default: False) (type: bool)
+    - env: The environment object used to generate trajectories. (default: None) (type: object)
+    - device: The device to store the tensors on. (default: "cpu") (type: str)
+    - trajectories: Whether to generate trajectory paths or individual points. (default: True) (type: bool)
+
+    Returns:
+    - x: The model input tensor. (type: tuple[torch.Tensor])
+    - rs: np arrays of generated trajectory paths or points. 
+    - vs: np arrays of generated velocities. 
+    - cs: np arrays of the context signals. 
+    """
     # create test dataset
     dg = trajectory_generator.DataGenerator() # generator
     if env is None:
@@ -132,7 +185,7 @@ def test_dataset(sequence, timesteps, context = False, env = None, device = "cpu
     for i, name in enumerate(sequence):
         walls = env.envs[name]
         
-        if trajectories:
+        if trajectories: 
             r, v = dg.generate_paths(1, timesteps + 1, walls)
             vs[i] = v[0]
         else:

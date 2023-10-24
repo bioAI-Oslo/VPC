@@ -13,21 +13,33 @@ def l1_reg(l1, vals):
     """
     return l1 * torch.mean(torch.abs(vals))
 
-def l2_reg(l2, vals):
-    """L2 regularization
-    Args:
-        l2 (float): L2 decay parameter
-        vals (torch.tensor): Values to be penalized; 
-                        can be e.g. weights or activities
-    Returns:
-        torch float: weighted mean squared loss
-    """
-    return l2 * torch.mean(vals**2)
-
 def euclid(y, yhat):
+    """
+    Calculates the Euclidean distance between two tensors.
+
+    Args:
+        y (torch.Tensor): The first input tensor.
+        yhat (torch.Tensor): The second input tensor.
+
+    Returns:
+        torch.Tensor: The mean of the square root of the sum of squared differences between y and yhat along the last dimension.
+    """
     return torch.mean(torch.sqrt(torch.sum((y-yhat)**2, dim = - 1)))
 
 def get_datasets(loc, context, trajectories, batch_size, device = "cpu"):
+    """
+    Loads datasets and prepares them for training and validation.
+    
+    Args:
+        loc (str): The location of the datasets.
+        context (bool): Whether to include context data.
+        trajectories (bool): Whether to load trajectory data. If false, load point data
+        batch_size (int): The batch size for training and validation.
+        device (str, optional): The device to use for computation. Defaults to "cpu".
+        
+    Returns:
+        tuple: A tuple containing the training data loader and the validation data loader.
+    """
     
     # load datasets
     train_data = np.load(f"{loc}/train_dataset.npz") 
