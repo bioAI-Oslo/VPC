@@ -97,22 +97,32 @@ def rate_overlap(stack_a, stack_b):
     smallest = np.minimum(mean_a, mean_b)
 
     rate_overlap = smallest/largest 
-
-    # a cell is not active in either if rate_overlap is nan
-    inactive = np.isnan(rate_overlap) 
-    n_active = np.sum(~inactive) # number of active
-    
-    mean_overlap = np.mean(rate_overlap[~inactive])
-    std_overlap = np.std(rate_overlap[~inactive])/np.sqrt(n_active)
-    return mean_overlap, std_overlap, n_active
+    return rate_overlap
 
 def random_rate_overlap(stack_a, stack_b, iterations = 1000):
-    
-    random_overlap = np.zeros((iterations))
-    all_inds = np.arange(len(stack_a))
-    available_inds = [all_inds[all_inds != i] for i in range(len(stack_a))]
+    n_cells = len(stack_a)
+    random_overlap = np.zeros((iterations, n_cells))
+    all_inds = np.arange(n_cells)
+    available_inds = [all_inds[all_inds != i] for i in range(n_cells)]
     
     for i in range(iterations):
         inds = np.array([np.random.choice(inds) for inds in available_inds])
-        random_overlap[i], _, _ = rate_overlap(stack_a, stack_b[inds])
-    return np.mean(random_overlap)
+        random_overlap[i] = rate_overlap(stack_a, stack_b[inds])
+    return random_overlap
+
+def rate_difference(stack_a, stack_b):
+    mean_a = np.nansum(stack_a, axis = (1, 2))
+    mean_b = np.nansum(stack_b, axis = (1, 2))
+    rate_diff = (mean_a - mean_b)/(mean_a + mean_b)
+    return rate_diff
+
+def random_rate_difference(stack_a, stack_b, iterations = 1000):
+    n_cells = len(stack_a)
+    random_difference = np.zeros((iterations, n_cells))
+    all_inds = np.arange(n_cells)
+    available_inds = [all_inds[all_inds != i] for i in range(n_cells)]
+    
+    for i in range(iterations):
+        inds = np.array([np.random.choice(inds) for inds in available_inds])
+        random_difference[i] = rate_difference(stack_a, stack_b[inds])
+    return random_difference
