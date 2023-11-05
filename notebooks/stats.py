@@ -111,9 +111,9 @@ def random_rate_overlap(stack_a, stack_b, iterations = 1000):
     return random_overlap
 
 def rate_difference(stack_a, stack_b):
-    mean_a = np.nansum(stack_a, axis = (1, 2))
-    mean_b = np.nansum(stack_b, axis = (1, 2))
-    rate_diff = (mean_a - mean_b)/(mean_a + mean_b)
+    sum_a = np.nansum(stack_a, axis = (1, 2))
+    sum_b = np.nansum(stack_b, axis = (1, 2))
+    rate_diff = (sum_a - sum_b)/(sum_a + sum_b)
     return rate_diff
 
 def random_rate_difference(stack_a, stack_b, iterations = 1000):
