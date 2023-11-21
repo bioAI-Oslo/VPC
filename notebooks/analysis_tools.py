@@ -28,7 +28,7 @@ def load_model(path, device = "cpu", model_type = "rnn"):
     model.device = device
     return model, params
 
-def plot_sequence(ratemaps, titles = None, show_units = 5, pane_size = 1, cmap = None, normalize = False):
+def plot_sequence(ratemaps, titles = None, show_units = 5, pane_size = (1, 1), cmap = None, normalize = False):
     """
     Plot sequence ratemaps.
     
@@ -50,7 +50,7 @@ def plot_sequence(ratemaps, titles = None, show_units = 5, pane_size = 1, cmap =
     else:
         titlepad = 1
 
-    figsize = [pane_size*(len(ratemaps)+titlepad), pane_size*show_units]
+    figsize = [pane_size[0]*(len(ratemaps)+titlepad), pane_size[1]*show_units]
     
     fig, axs = plt.subplots(show_units, len(ratemaps) + titlepad, figsize = figsize, squeeze = False)
 
@@ -77,7 +77,7 @@ def plot_sequence(ratemaps, titles = None, show_units = 5, pane_size = 1, cmap =
     
     return fig, axs
 
-def plot_ensemble(ratemaps, n = 3, cmap = None, pane_size = 1):
+def plot_ensemble(ratemaps, n = 3, cmap = None, pane_size = (1,1)):
     """
     Plots a grid of ensemble ratemaps.
 
@@ -91,7 +91,7 @@ def plot_ensemble(ratemaps, n = 3, cmap = None, pane_size = 1):
         fig, ax: The matplotlib figure and axis objects.
     """
 
-    figsize = pane_size*np.array([n,n])
+    figsize = np.array([n*pane_size[0],n*pane_size[1]])
     fig, ax = plt.subplots(n, n, figsize = figsize)
     
     for i in range(n**2):

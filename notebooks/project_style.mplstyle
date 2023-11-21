@@ -19,7 +19,7 @@ axes.spines.top:    False
 axes.spines.right:  False
 
 # colorblind color scheme!
-axes.prop_cycle: cycler("color", ["348ABD", "7A68A6", "A60628", "467821", "CF4457", "188487", "E24A33"])
+#axes.prop_cycle: cycler("color", ["348ABD", "7A68A6", "A60628", "467821", "CF4457", "188487", "E24A33"])
                       # E24A33 : orange
                       # 7A68A6 : purple
                       # 348ABD : blue
@@ -27,6 +27,11 @@ axes.prop_cycle: cycler("color", ["348ABD", "7A68A6", "A60628", "467821", "CF445
                       # A60628 : red
                       # CF4457 : pink
                       # 467821 : green
+
+# Viridis!
+#axes.prop_cycle: cycler("color", ['46327e', '365c8d', '277f8e', '1fa187', '4ac16d', 'a0da39', 'fde725'])
+axes.prop_cycle: cycler("color", ['440154', '414487', '2A788E', '22A884', '7AD151', 'FCE625'])
+
 
 figure.dpi:         300       # figure dots per inch
 
