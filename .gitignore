@@ -130,4 +130,8 @@ dmypy.json
 
 datasets/
 notebooks/figures/
+notebooks/review
+models/rotated_coordinates
+models/rotated_coordinates_and_velocity
+models/rotated_velocity
 .DS_Store
